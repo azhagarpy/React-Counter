@@ -2,35 +2,23 @@ pipeline {
     agent any
 
     environment {
-        NODE_VERSION = '23'
-        APP_NAME = 'react-app'
         PORT = '3000'
     }
 
     stages {
 
-        stage('Checkout Code') {
-            steps {
-                git branch: 'main', url: 'https://github.com/azhagarpy/React-Counter.git'
-            }
-        }
-
         stage('Setup Node') {
             steps {
-                steps {
-                    sh '''
-                        export NVM_DIR="$HOME/.nvm"
-                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-                        [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+                sh '''
+                    export NVM_DIR="$HOME/.nvm"
+                    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
-                        nvm install $NODE_VERSION
-                        nvm use $NODE_VERSION
+                    nvm install $NODE_VERSION
+                    nvm use $NODE_VERSION
 
-                        node -v
-                        npm -v
-                        '''
-                    }
-
+                    node -v
+                    npm -v
+                '''
             }
         }
 
@@ -49,13 +37,14 @@ pipeline {
         stage('Run App') {
             steps {
                 sh '''
-                    echo "Stopping old app if running..."
+                    echo "Stopping old app..."
                     pkill -f "serve -s build" || true
 
-                    echo "Installing serve package..."
-                    pm start
+                    echo "Installing serve..."
+                    npm install -g serve
 
-                    echo "App started..."
+                    echo "Starting app..."
+                    nohup serve -s build -l $PORT > app.log 2>&1 &
                 '''
             }
         }
