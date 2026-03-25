@@ -9,16 +9,7 @@ pipeline {
 
         stage('Setup Node') {
             steps {
-                sh '''
-                    export NVM_DIR="$HOME/.nvm"
-                    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-
-                    nvm install $NODE_VERSION
-                    nvm use $NODE_VERSION
-
-                    node -v
-                    npm -v
-                '''
+                sh 'node -v && npm -v'
             }
         }
 
